@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Co-Pilot</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="header">
+      <span class="icon">✨</span>
+      <h1>Prompt Co-Pilot</h1>
+    </div>
+
+    <div class="current-site">
+      <div class="site-info">
+        <span class="site-label">Current Site:</span>
+        <span class="site-name" id="siteName">Loading...</span>
+      </div>
+
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="siteToggle">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label" id="toggleLabel">Disabled</span>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3>How to Use</h3>
+      <ul class="instructions">
+        <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> - Open Co-Pilot</li>
+        <li>Right-click in text field - Select "Improve with Co-Pilot"</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      <p class="version">Version 1.0.0</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

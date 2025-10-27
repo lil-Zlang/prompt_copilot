@@ -1,0 +1,26 @@
+# Development files
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+*.zip
+
+# Temporary files
+*.tmp
+*.cache
+
+# Node modules (if you add build tools later)
+node_modules/
+package-lock.json
+
+# Environment files
+.env
+.env.local
+
+# Chrome extension packaging
+*.pem
+*.crx
