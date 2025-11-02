@@ -1,5 +1,90 @@
 # Development Documentation
 
+## 2025-11-02 - OpenAI API Key Format Support
+
+**Date/Time:** Sunday, November 2, 2025 - 12:31
+
+**Feature:** Changed API key format from Novita AI to OpenAI format, allowing users to bring their own OpenAI API keys
+
+**Previous Implementation:**
+- Used Novita AI API endpoint (https://api.novita.ai/openai/v1)
+- Storage key: `novitaApiKey`
+- Models: `meta-llama/llama-3.3-70b-instruct` (fast), `deepseek/deepseek-r1` (expert)
+- UI labels referenced "Novita AI"
+- No API key format validation
+
+**New Implementation:**
+- Uses OpenAI API endpoint (https://api.openai.com/v1)
+- Storage key: `openaiApiKey`
+- Models: `gpt-4o-mini` (fast), `gpt-4o` (expert)
+- UI labels reference "OpenAI"
+- Validates OpenAI API key format (starts with "sk-" and minimum 20 characters)
+
+**Changes Made:**
+
+### 1. API Service (`lib/llm-service.js`)
+- Changed baseURL from `https://api.novita.ai/openai/v1` to `https://api.openai.com/v1`
+- Updated models to OpenAI models:
+  - Fast mode: `gpt-4o-mini` (fast, cost-effective)
+  - Expert mode: `gpt-4o` (advanced reasoning)
+- Added `validateApiKey()` method to check OpenAI key format (starts with "sk-")
+- Updated storage key from `novitaApiKey` to `openaiApiKey`
+- Updated error messages to reference OpenAI instead of Novita
+- Updated model info display to show "GPT-4o Mini" and "GPT-4o"
+- Fixed `generateFromTemplate()` to use `this.getModel()` instead of `this.model`
+
+### 2. Popup UI (`popup/popup.js`)
+- Updated storage key from `novitaApiKey` to `openaiApiKey`
+- Added `validateOpenAIKey()` function for client-side validation
+- Updated error messages to show "Invalid format. OpenAI keys start with 'sk-'"
+- Updated mode display text to show "GPT-4o Mini" and "GPT-4o - Advanced Reasoning"
+
+### 3. Popup HTML (`popup/popup.html`)
+- Changed label from "Novita AI API Key" to "OpenAI API Key"
+- Updated placeholder to "sk-... (Enter your OpenAI API key)"
+- Updated link from novita.ai to platform.openai.com/api-keys
+- Updated default mode info text to "Using: Fast mode (GPT-4o Mini)"
+
+### 4. Modal (`content/modal.js`)
+- Updated API key warning message to reference OpenAI
+- Changed link from novita.ai to platform.openai.com/api-keys
+- Updated error messages to mention OpenAI API key
+
+**API Key Validation:**
+- Format check: Must start with "sk-"
+- Length check: Minimum 20 characters (allows for different OpenAI key types like sk-proj-*)
+- Both client-side (popup) and server-side (service) validation
+- Clear error messages if format is invalid
+
+**Benefits:**
+- ✅ Users can use their own OpenAI API keys
+- ✅ Direct integration with OpenAI's official API
+- ✅ Access to latest OpenAI models (GPT-4o, GPT-4o Mini)
+- ✅ Better model performance and reliability
+- ✅ Standard OpenAI API key format validation
+
+**Migration Notes:**
+- Existing users with `novitaApiKey` will need to re-enter their API key as `openaiApiKey`
+- Old storage key (`novitaApiKey`) is no longer used
+- Users should get API keys from https://platform.openai.com/api-keys
+
+**Files Modified:**
+- `lib/llm-service.js` - Updated API endpoint, models, storage key, validation
+- `popup/popup.js` - Updated storage key, added validation, updated UI text
+- `popup/popup.html` - Updated labels and links
+- `content/modal.js` - Updated error messages
+
+**Verification:**
+1. Open extension popup
+2. Enter OpenAI API key (starts with "sk-")
+3. Should see validation error if format is wrong
+4. Save key successfully
+5. Use AI refinement feature
+6. Verify it calls OpenAI API endpoint
+7. Check that models are GPT-4o Mini (fast) and GPT-4o (expert)
+
+---
+
 ## 2025-10-27 - Icon Loading Error Fix (Updated)
 
 **Date/Time:** Monday, October 27, 2025 - 16:28

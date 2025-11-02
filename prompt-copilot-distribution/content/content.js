@@ -1,0 +1,259 @@
+// Content Script for Prompt Co-Pilot
+// Handles text field detection, keyboard shortcuts, and modal management
+
+class PromptCoPilot {
+  constructor() {
+    this.currentTextField = null;
+    this.modal = null;
+    this.isEnabled = false;
+    this.init();
+  }
+
+  async init() {
+    // Check if extension is enabled for this site
+    const response = await chrome.runtime.sendMessage({
+      type: 'CHECK_SITE_ENABLED',
+      url: window.location.href
+    });
+    this.isEnabled = response.enabled;
+
+    // Listen for messages from background script
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      this.handleMessage(message, sender, sendResponse);
+    });
+
+    // Track currently focused text field
+    this.setupFocusTracking();
+
+    // Add visual indicator if enabled
+    if (this.isEnabled) {
+      this.showEnabledIndicator();
+    }
+
+    console.log('Prompt Co-Pilot initialized', { enabled: this.isEnabled });
+  }
+
+  handleMessage(message, sender, sendResponse) {
+    switch (message.type) {
+      case 'OPEN_COPILOT_MODAL':
+        this.openModal(message.source, message.selectionText);
+        break;
+
+      case 'SHOW_ENABLE_PROMPT':
+        this.showEnablePrompt();
+        break;
+
+      case 'SITE_STATUS_CHANGED':
+        this.isEnabled = message.enabled;
+        if (message.enabled) {
+          this.showEnabledIndicator();
+        } else {
+          this.removeEnabledIndicator();
+        }
+        break;
+    }
+  }
+
+  setupFocusTracking() {
+    // Track focus on textareas and contenteditable elements
+    document.addEventListener('focusin', (e) => {
+      if (this.isTextInput(e.target)) {
+        this.currentTextField = e.target;
+      }
+    }, true);
+
+    document.addEventListener('focusout', (e) => {
+      // Keep reference for a short time in case modal opens
+      setTimeout(() => {
+        if (!this.modal || !this.modal.isOpen) {
+          // Only clear if modal isn't open
+        }
+      }, 100);
+    }, true);
+  }
+
+  isTextInput(element) {
+    if (!element) return false;
+
+    // Check for textarea
+    if (element.tagName === 'TEXTAREA') {
+      return true;
+    }
+
+    // Check for contenteditable
+    if (element.contentEditable === 'true' || element.isContentEditable) {
+      return true;
+    }
+
+    // Check for input[type="text"] (optional, less useful for prompts)
+    if (element.tagName === 'INPUT' && element.type === 'text') {
+      return true;
+    }
+
+    return false;
+  }
+
+  getTextFromElement(element) {
+    if (!element) return '';
+
+    if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+      return element.value || '';
+    }
+
+    if (element.contentEditable === 'true' || element.isContentEditable) {
+      return element.innerText || element.textContent || '';
+    }
+
+    return '';
+  }
+
+  setTextToElement(element, text) {
+    if (!element) return false;
+
+    if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype,
+        'value'
+      )?.set || Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      )?.set;
+
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(element, text);
+      } else {
+        element.value = text;
+      }
+
+      // Trigger events for React/Vue to detect change
+      const inputEvent = new Event('input', { bubbles: true });
+      const changeEvent = new Event('change', { bubbles: true });
+      element.dispatchEvent(inputEvent);
+      element.dispatchEvent(changeEvent);
+
+      return true;
+    }
+
+    if (element.contentEditable === 'true' || element.isContentEditable) {
+      element.innerText = text;
+
+      // Trigger input event
+      const inputEvent = new Event('input', { bubbles: true });
+      element.dispatchEvent(inputEvent);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  async openModal(source, selectionText = '') {
+    if (!this.isEnabled) {
+      this.showEnablePrompt();
+      return;
+    }
+
+    // Get current text
+    let promptText = '';
+
+    // Always try to get the currently focused element first
+    const activeElement = document.activeElement;
+    if (this.isTextInput(activeElement)) {
+      this.currentTextField = activeElement;
+    }
+
+    if (selectionText) {
+      // Use selected text from context menu
+      promptText = selectionText;
+    } else if (this.currentTextField) {
+      // Get text from focused field
+      promptText = this.getTextFromElement(this.currentTextField);
+    }
+
+    // Ensure we have a text field reference
+    if (!this.currentTextField) {
+      this.showNotification('Please click in a text field first, then try again.', 'warning');
+      return;
+    }
+
+    // Import and create modal if needed
+    if (!this.modal) {
+      await this.loadModal();
+    }
+
+    // Open modal with text (empty text will show built-in prompts)
+    this.modal.open(promptText, this.currentTextField);
+  }
+
+  async loadModal() {
+    // Modal class is already loaded via content script
+    this.modal = new CoPilotModal(this);
+  }
+
+  applyChanges(newText) {
+    if (this.currentTextField) {
+      const success = this.setTextToElement(this.currentTextField, newText);
+      if (success) {
+        this.showNotification('Prompt improved successfully!', 'success');
+        // Refocus the text field
+        this.currentTextField.focus();
+      } else {
+        this.showNotification('Failed to apply changes. Please try again.', 'error');
+      }
+    }
+  }
+
+  showNotification(message, type = 'info') {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.className = `copilot-toast copilot-toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => toast.classList.add('copilot-toast-show'), 10);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      toast.classList.remove('copilot-toast-show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  showEnablePrompt() {
+    const message = 'Enable Prompt Co-Pilot for this site by clicking the extension icon.';
+    this.showNotification(message, 'info');
+  }
+
+  showEnabledIndicator() {
+    // Optional: Add a small indicator that extension is active
+    if (document.getElementById('copilot-indicator')) return;
+
+    const indicator = document.createElement('div');
+    indicator.id = 'copilot-indicator';
+    indicator.className = 'copilot-indicator';
+    
+    // Detect OS for correct shortcut
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const shortcut = isMac ? 'Cmd+Shift+L' : 'Ctrl+Shift+L';
+    indicator.title = `Prompt Co-Pilot Active (${shortcut})`;
+    indicator.innerHTML = '✨';
+    document.body.appendChild(indicator);
+  }
+
+  removeEnabledIndicator() {
+    const indicator = document.getElementById('copilot-indicator');
+    if (indicator) {
+      indicator.remove();
+    }
+  }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.promptCoPilot = new PromptCoPilot();
+  });
+} else {
+  window.promptCoPilot = new PromptCoPilot();
+}

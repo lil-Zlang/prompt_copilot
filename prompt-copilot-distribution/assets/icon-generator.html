@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Co-Pilot Icon Generator</title>
+  <style>
+    body {
+      margin: 40px;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .instructions {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .instructions ol {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      margin: 8px 0;
+    }
+
+    .icons-container {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .icon-wrapper {
+      text-align: center;
+    }
+
+    .icon-label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20%;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      color: white;
+      font-weight: bold;
+    }
+
+    .icon-16 {
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
+    }
+
+    .icon-48 {
+      width: 48px;
+      height: 48px;
+      font-size: 28px;
+    }
+
+    .icon-128 {
+      width: 128px;
+      height: 128px;
+      font-size: 80px;
+    }
+
+    .size-info {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prompt Co-Pilot Icon Generator</h1>
+
+  <div class="instructions">
+    <h2>How to Create Icons:</h2>
+    <ol>
+      <li>Use your browser's screenshot tool or extension to capture each icon below</li>
+      <li>Crop precisely to the icon boundaries (16x16, 48x48, 128x128 pixels)</li>
+      <li>Save the files as:
+        <ul>
+          <li><code>icon16.png</code></li>
+          <li><code>icon48.png</code></li>
+          <li><code>icon128.png</code></li>
+        </ul>
+      </li>
+      <li>Place all three files in the <code>assets/icons/</code> folder</li>
+    </ol>
+    <p><strong>Alternative:</strong> Use an online icon generator like <a href="https://www.favicon-generator.org/" target="_blank">favicon-generator.org</a> or design custom icons in Figma/Canva.</p>
+  </div>
+
+  <div class="icons-container">
+    <div class="icon-wrapper">
+      <div class="icon-label">16x16 Icon</div>
+      <div class="icon icon-16">✨</div>
+      <div class="size-info">icon16.png</div>
+    </div>
+
+    <div class="icon-wrapper">
+      <div class="icon-label">48x48 Icon</div>
+      <div class="icon icon-48">✨</div>
+      <div class="size-info">icon48.png</div>
+    </div>
+
+    <div class="icon-wrapper">
+      <div class="icon-label">128x128 Icon</div>
+      <div class="icon icon-128">✨</div>
+      <div class="size-info">icon128.png</div>
+    </div>
+  </div>
+
+  <div class="instructions" style="margin-top: 30px;">
+    <h2>Quick Placeholder Solution:</h2>
+    <p>If you just want to test the extension quickly, you can:</p>
+    <ol>
+      <li>Create simple colored PNG files of the required sizes using any image editor</li>
+      <li>Or temporarily comment out the "icons" sections in manifest.json</li>
+      <li>The extension will work without icons, though Chrome will show a default puzzle piece</li>
+    </ol>
+  </div>
+</body>
+</html>
