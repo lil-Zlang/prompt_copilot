@@ -21,13 +21,6 @@ Browser extension for AI-powered prompt refinement using OpenAI API.
 5. Select the `prompt_copilot` folder
 6. Done! The extension icon should appear in your toolbar
 
-### Creating Icons
-
-Before loading the extension, you'll need to create icon files. Place PNG icons in `assets/icons/`:
-
-- `icon16.png` - 16x16 pixels
-- `icon48.png` - 48x48 pixels
-- `icon128.png` - 128x128 pixels
 
 ## How to Use
 
@@ -103,56 +96,6 @@ prompt_copilot/
     └── icons/                # Extension icons (you need to add these)
 ```
 
-## Development
-
-### Making Changes
-
-After making code changes:
-
-1. Go to `chrome://extensions/`
-2. Find "Prompt Co-Pilot"
-3. Click the refresh icon
-4. Reload any pages you're testing on
-
-### Testing
-
-Test the extension on various sites:
-
-- ChatGPT (chat.openai.com) - textarea
-- Gmail (mail.google.com) - contenteditable
-- Twitter (twitter.com) - textarea
-- Notion (notion.so) - contenteditable
-- Google Docs (docs.google.com) - contenteditable
-
-### Common Issues
-
-**Modal doesn't open:**
-- Check that you've enabled the extension for the current site
-- Open DevTools Console and check for JavaScript errors
-- Verify you're focused in a text field
-
-**Text doesn't update:**
-- Some sites use complex React/Vue implementations
-- Check that event triggering is working (see `setTextToElement` in content.js)
-
-**Keyboard shortcut doesn't work:**
-- On some sites, `Ctrl+Shift+L` may be taken
-- Try the right-click menu instead
-- Check Chrome shortcuts aren't conflicting (`chrome://extensions/shortcuts`)
-
-## Future Enhancements
-
-Potential improvements for future versions:
-
-- [ ] AI-powered analysis (OpenAI/Claude API integration)
-- [ ] Custom cure templates (user-defined)
-- [ ] Prompt history and versioning
-- [ ] A/B testing different prompts
-- [ ] Multi-language support
-- [ ] Firefox and Safari versions
-- [ ] Sync settings across devices
-- [ ] Analytics dashboard
-
 ## Privacy & Security
 
 - No data is sent to external servers (100% local)
@@ -178,6 +121,5 @@ Contributions welcome! Please:
 ## Support
 
 Found a bug or have a suggestion? Please open an issue on GitHub.
+If you like this idea feel free to reach out to me!
 
-Version: 1.0.0  
-Last Updated: November 2025
