@@ -28,16 +28,43 @@
       </div>
     </div>
 
+    <div class="api-section">
+      <h3>AI Configuration</h3>
+      <div class="api-info">
+        <label for="apiKey">Novita AI API Key:</label>
+        <input type="password" id="apiKey" placeholder="Enter your API key">
+        <button id="saveApiKey" class="save-btn">Save</button>
+        <p class="api-hint">Get your key at <a href="https://novita.ai" target="_blank">novita.ai</a></p>
+        <p class="api-status" id="apiStatus"></p>
+      </div>
+
+      <div class="mode-selector">
+        <label>AI Mode:</label>
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="fastModeBtn" data-mode="fast">
+            ⚡ Fast
+            <span class="mode-desc">Quick refinement</span>
+          </button>
+          <button class="mode-btn" id="expertModeBtn" data-mode="expert">
+            🧠 Expert
+            <span class="mode-desc">Deep reasoning</span>
+          </button>
+        </div>
+        <p class="mode-info" id="modeInfo">Using: Fast mode (Llama 3.3 70B)</p>
+      </div>
+    </div>
+
     <div class="info-section">
       <h3>How to Use</h3>
       <ul class="instructions">
-        <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> - Open Co-Pilot</li>
+        <li><kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> - Open Co-Pilot (Mac)</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> - Open Co-Pilot (Windows/Linux)</li>
         <li>Right-click in text field - Select "Improve with Co-Pilot"</li>
       </ul>
     </div>
 
     <div class="footer">
-      <p class="version">Version 1.0.0</p>
+      <p class="version">Version 1.0.0 - AI Powered</p>
     </div>
   </div>
 

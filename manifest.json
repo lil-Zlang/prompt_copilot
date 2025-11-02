@@ -17,14 +17,14 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["lib/cure-templates.js", "content/modal.js", "content/content.js"],
+      "js": ["lib/llm-service.js", "lib/cure-templates.js", "content/modal.js", "content/content.js"],
       "css": ["content/content.css"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/modal.js", "lib/cure-templates.js"],
+      "resources": ["content/modal.js", "lib/cure-templates.js", "lib/llm-service.js"],
       "matches": ["<all_urls>"]
     }
   ],
@@ -44,8 +44,8 @@
   "commands": {
     "improve-prompt": {
       "suggested_key": {
-        "default": "Ctrl+Shift+P",
-        "mac": "Command+Shift+P"
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
       },
       "description": "Improve text with Co-Pilot"
     }

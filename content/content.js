@@ -156,23 +156,23 @@ class PromptCoPilot {
     // Get current text
     let promptText = '';
 
+    // Always try to get the currently focused element first
+    const activeElement = document.activeElement;
+    if (this.isTextInput(activeElement)) {
+      this.currentTextField = activeElement;
+    }
+
     if (selectionText) {
       // Use selected text from context menu
       promptText = selectionText;
     } else if (this.currentTextField) {
       // Get text from focused field
       promptText = this.getTextFromElement(this.currentTextField);
-    } else {
-      // Try to find focused element
-      const activeElement = document.activeElement;
-      if (this.isTextInput(activeElement)) {
-        this.currentTextField = activeElement;
-        promptText = this.getTextFromElement(activeElement);
-      }
     }
 
-    if (!promptText.trim()) {
-      this.showNotification('No text found. Please type something first.', 'warning');
+    // Ensure we have a text field reference
+    if (!this.currentTextField) {
+      this.showNotification('Please click in a text field first, then try again.', 'warning');
       return;
     }
 
@@ -181,7 +181,7 @@ class PromptCoPilot {
       await this.loadModal();
     }
 
-    // Open modal with text
+    // Open modal with text (empty text will show built-in prompts)
     this.modal.open(promptText, this.currentTextField);
   }
 
@@ -232,7 +232,11 @@ class PromptCoPilot {
     const indicator = document.createElement('div');
     indicator.id = 'copilot-indicator';
     indicator.className = 'copilot-indicator';
-    indicator.title = 'Prompt Co-Pilot Active (Ctrl+Shift+P)';
+    
+    // Detect OS for correct shortcut
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const shortcut = isMac ? 'Cmd+Shift+L' : 'Ctrl+Shift+L';
+    indicator.title = `Prompt Co-Pilot Active (${shortcut})`;
     indicator.innerHTML = '✨';
     document.body.appendChild(indicator);
   }

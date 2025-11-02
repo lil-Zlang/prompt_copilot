@@ -131,6 +131,154 @@ input:disabled + .slider {
   color: #6b7280;
 }
 
+/* API Section */
+.api-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.api-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.api-info label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.api-info input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.api-info input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.save-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #2563eb;
+}
+
+.api-hint {
+  margin: 8px 0 0 0;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.api-hint a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.api-hint a:hover {
+  text-decoration: underline;
+}
+
+.api-status {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.api-status.success {
+  color: #10b981;
+}
+
+.api-status.error {
+  color: #ef4444;
+}
+
+/* Mode Selector */
+.mode-selector {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.mode-selector > label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.mode-btn:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.mode-btn.active {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: white;
+}
+
+.mode-desc {
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.mode-info {
+  margin: 0;
+  font-size: 11px;
+  color: #6b7280;
+  text-align: center;
+}
+
 /* Info Section */
 .info-section {
   margin-bottom: 16px;

@@ -1,0 +1,506 @@
+# Development Documentation
+
+## 2025-10-27 - Icon Loading Error Fix (Updated)
+
+**Date/Time:** Monday, October 27, 2025 - 16:28
+
+**Issue:** Chrome extension was failing to load icons with error "Could not load icon 'assets/icons/icon16.png' specified in 'action'. Could not load manifest."
+
+**Root Cause:** The icon files were located in a nested `assets/assets/icons/` directory structure, but the manifest.json was correctly referencing `assets/icons/`. The issue was that the icons were in the wrong location.
+
+**Solution:** 
+1. Copied icon files from `assets/assets/icons/` to `assets/icons/` (correct location)
+2. Removed the redundant nested `assets/assets/` directory
+3. Ensured manifest.json references the standard path `assets/icons/`
+
+**Files Modified:**
+- File structure: Moved icons to correct location `assets/icons/`
+- `manifest.json` - Confirmed correct icon paths (assets/icons/icon16.png, icon48.png, icon128.png)
+
+**Files/Directories Removed:**
+- `assets/assets/` - Removed nested directory structure
+
+**Final Structure:**
+```
+assets/
+  ├── icons/
+  │   ├── icon16.png
+  │   ├── icon48.png
+  │   └── icon128.png
+  └── icon-generator.html
+```
+
+**Impact:** This fix resolves the Chrome extension loading error by ensuring icon files are in the expected location that matches the manifest.json references.
+
+**Verification:** The extension should now load successfully when uploaded to Chrome. If you're still seeing the old error, try:
+1. Remove the extension completely from Chrome
+2. Reload/reupload the extension folder
+3. Chrome may cache the old manifest, so a fresh install is recommended
+
+---
+
+## 2025-10-27 - Keyboard Shortcut Conflict Fix
+
+**Date/Time:** Monday, October 27, 2025 - 16:30
+
+**Issue:** When pressing `Command+Shift+P` in Brave browser, it triggered the browser's built-in command palette (`:>`) instead of the extension's "Improve text with Co-Pilot" command.
+
+**Root Cause:** The keyboard shortcut `Command+Shift+P` (and `Ctrl+Shift+P` on Windows/Linux) is a reserved/default keyboard shortcut in Chromium-based browsers (Chrome, Brave, Edge) that opens the browser's command palette. Extension shortcuts cannot override built-in browser shortcuts.
+
+**Solution:** Changed the keyboard shortcut to `Command+Shift+L` (Mac) / `Ctrl+Shift+L` (Windows/Linux), which doesn't conflict with browser built-in shortcuts.
+
+**Files Modified:**
+- `manifest.json` - Updated the `commands.improve-prompt.suggested_key` from `Command+Shift+P` to `Command+Shift+L`
+
+**Impact:** Users can now trigger the "Improve text with Co-Pilot" feature using `Command+Shift+L` without conflicts.
+
+**Alternative Shortcuts Considered:**
+- `Command+Shift+P` - Conflicts with browser command palette
+- `Command+Shift+I` - Conflicts with DevTools
+- `Command+Shift+L` - ✅ Selected (no known conflicts)
+
+**Verification:** After reloading the extension, press `Command+Shift+L` to trigger the Co-Pilot feature.
+
+---
+
+## 2025-10-27 - Built-in Prompt Templates & UI Simplification
+
+**Date/Time:** Monday, October 27, 2025 - 17:00
+
+**Issue:** 
+1. No built-in prompt templates available when opening Co-Pilot with empty text field
+2. UI design was too "vibe coded" with excessive gradients and animations
+
+**Solution Implemented:**
+
+### 1. Built-in Prompt Templates
+Added 8 predefined prompt engineering templates based on prompt.txt best practices:
+
+**Basic Techniques:**
+- Zero-Shot Query: Direct questions without examples
+- Few-Shot with Examples: Pattern-based prompting with examples
+- Role-Playing Expert: Assign specific expertise to AI
+- Structured Output: Request specific formats (bullets, tables, etc.)
+- Tone & Style Control: Set communication style
+  
+**Advanced Techniques:**
+- Chain-of-Thought: Step-by-step reasoning for complex problems
+- Context-Rich Prompt: Provide background to reduce hallucinations
+- Generated Knowledge: Have AI generate facts first, then use them
+
+### 2. UI Simplification Changes
+- Removed gradient backgrounds from modal header (now clean white)
+- Changed primary color from purple gradient (#667eea) to simple blue (#3b82f6)
+- Simplified button styles (removed excessive shadows and transforms)
+- Removed pulse animation from indicator
+- Made borders more consistent and less rounded
+- Changed close button to simple hover effect
+
+**Files Modified:**
+- `lib/cure-templates.js` - Added BUILTIN_PROMPTS array with 8 templates
+- `content/modal.js` - Added showBuiltinPrompts(), renderBuiltinPrompts(), selectBuiltinPrompt() methods
+- `content/modal.js` - Modified open() to show templates when no text present
+- `content/content.css` - Simplified color scheme, removed gradients, added .copilot-builtin-* styles
+- `popup/popup.html` - Updated keyboard shortcut instructions to show Command+Shift+L
+
+**Impact:** 
+- Users now see helpful prompt templates when opening Co-Pilot with no text
+- Cleaner, more professional UI that's less distracting
+- Templates are based on proven prompt engineering techniques from academic and industry sources
+- Templates are interactive - clicking one applies the example to the text field
+
+**User Flow:**
+1. User presses Command+Shift+L in empty text field
+2. Modal opens showing "Prompt Templates" 
+3. User sees 8 template cards organized by Basic/Advanced
+4. User clicks a template card
+5. Example prompt is automatically inserted into text field
+6. Modal closes and user can edit the prompt
+
+**Verification:** Reload the extension and press Command+Shift+L in an empty text field to see the new built-in templates.
+
+---
+
+## 2025-10-27 - Text Application Bug Fix & Site Enablement
+
+**Date/Time:** Monday, October 27, 2025 - 17:15
+
+**Issues:** 
+1. Applied changes from diagnosis weren't updating the text field
+2. Extension needed to be enabled per-site before use
+
+**Root Causes:**
+1. Modal was preventing opening when text field was empty (blocking built-in templates)
+2. Text field reference (`currentTextField`) wasn't being properly maintained during modal interaction
+3. Users needed to manually enable extension for each website via popup
+
+**Solutions:**
+
+### 1. Text Application Fix
+- Removed check that prevented modal from opening with empty text
+- Improved `currentTextField` tracking to always check `document.activeElement` first
+- Ensured text field reference is maintained throughout the modal lifecycle
+- Added better error handling when no text field is focused
+
+### 2. Site Enablement Flow
+**Important:** Extension must be enabled for each site before use:
+
+**Steps to enable:**
+1. Navigate to the website you want to use Co-Pilot on
+2. Click the Prompt Co-Pilot extension icon in browser toolbar
+3. Toggle the switch to "Enabled" 
+4. The page will reload automatically
+5. You'll see a ✨ indicator in bottom-left corner when active
+
+**Files Modified:**
+- `content/content.js` - Fixed openModal() to allow empty text, improved activeElement tracking
+- `content/content.js` - Updated indicator tooltip to show correct keyboard shortcut (Cmd+Shift+L)
+- `dev_documentation.txt` - Added troubleshooting guide
+
+**How It Works Now:**
+1. User enables extension for site via popup
+2. User clicks in any text field (textarea, contenteditable, or input[type="text"])
+3. User presses Cmd+Shift+L:
+   - If field has text → Shows diagnosis with improvements
+   - If field is empty → Shows built-in prompt templates
+4. User makes selections or applies template
+5. Text is automatically updated in the original field
+
+**Troubleshooting:**
+
+If text isn't being applied:
+- ✅ Make sure extension is enabled for the site (check for ✨ indicator)
+- ✅ Click inside the text field before pressing Cmd+Shift+L
+- ✅ Check that the field is editable (not disabled)
+- ✅ Try reloading the page after enabling the extension
+
+If modal doesn't open:
+- ✅ Extension must be enabled for the site first
+- ✅ You must be focused in a text input field
+- ✅ Check browser console for any errors
+
+**Verification:** 
+1. Enable extension for a test site (e.g., chat.openai.com)
+2. Click in text field
+3. Press Cmd+Shift+L
+4. Select a template or make improvements
+5. Click "Apply Changes"
+6. Text should appear in the field immediately
+
+---
+
+## 2025-10-27 - AI-Powered Prompt Refinement with Novita AI
+
+**Date/Time:** Monday, October 27, 2025 - 18:00
+
+**Feature:** Integrated Novita AI LLM API for intelligent, AI-powered prompt refinement
+
+**Previous Behavior:**
+- Clicking "Assign Persona" would simply append template text like "Act as an expert consultant"
+- No intelligence, just string concatenation
+- Example: "how do i use chat?" + template = "how do i use chat? Act as a critical analyst"
+
+**New Behavior:**
+- AI intelligently rewrites the entire prompt based on the improvement type
+- Understands context and integrates improvements naturally
+- Example: "how do i use chat?" → AI refines it properly based on persona selection
+
+**Implementation:**
+
+### 1. API Configuration
+- Added API key configuration in extension popup
+- Secure storage using chrome.storage.local
+- Users must get API key from https://novita.ai
+
+### 2. LLM Service Integration
+Created `lib/llm-service.js` with:
+- Novita AI API integration (https://api.novita.ai/openai)
+- Model: `meta-llama/llama-3.3-70b-instruct`
+- Specialized system prompts for each improvement type (persona, format, tone, etc.)
+- Error handling and API key validation
+
+### 3. AI-Powered Refinement
+- When user selects an improvement (e.g., "Assign Persona → Expert consultant")
+- Original prompt is sent to LLM with context about the improvement
+- LLM rewrites the entire prompt intelligently
+- Refined prompt replaces the original
+
+### 4. User Experience
+- Added processing overlay with spinner during AI processing
+- Toast notifications for success/error
+- API key warning if not configured
+- Disabled buttons during processing to prevent double-clicks
+
+**Files Created:**
+- `lib/llm-service.js` - LLM API service with Novita AI integration
+
+**Files Modified:**
+- `popup/popup.html` - Added API key configuration section
+- `popup/popup.css` - Styled API key input and status messages
+- `popup/popup.js` - Added API key storage logic
+- `content/modal.js` - Integrated LLM service, updated applyCure() to use AI
+- `content/content.css` - Added processing overlay styles
+- `manifest.json` - Added llm-service.js to content scripts
+
+**API Details:**
+- Base URL: https://api.novita.ai/openai/v1
+- Endpoint: /chat/completions
+- Model: meta-llama/llama-3.3-70b-instruct
+- Max Tokens: 1024
+- Temperature: 0.7
+- References: https://novita.ai/docs/guides/llm-api
+
+**How It Works:**
+
+1. **User Flow:**
+   - User types: "how do i use chat?"
+   - Opens Co-Pilot (Cmd+Shift+L)
+   - Sees diagnosis: "No Persona"
+   - Clicks "Assign Persona" → "Expert consultant"
+
+2. **AI Processing:**
+   - System prompt: "You are an expert prompt engineer. Refine prompts by adding persona..."
+   - User prompt: "Original: 'how do i use chat?' Improvement: Assign Persona - Expert consultant"
+   - LLM intelligently rewrites the prompt
+
+3. **Result:**
+   - Instead of: "how do i use chat? Act as an expert consultant"
+   - AI produces: "As an expert consultant, please provide a comprehensive guide on how to use chat features, including best practices and common use cases."
+
+**Benefits:**
+- ✅ Intelligent prompt refinement, not just appending text
+- ✅ Context-aware improvements
+- ✅ Professional prompt engineering powered by state-of-the-art LLM
+- ✅ Uses proven Novita AI infrastructure
+- ✅ Cost-effective with open-source models
+
+**Configuration Required:**
+Users MUST add their Novita AI API key:
+1. Get API key at https://novita.ai
+2. Click extension icon → Enter API key → Save
+3. Start using AI-powered refinement!
+
+**Verification:**
+1. Add Novita AI API key in extension popup
+2. Type "how do i use chat?" in a text field
+3. Press Cmd+Shift+L
+4. Click "Assign Persona" → Select any option
+5. See processing spinner
+6. Prompt is intelligently refined by AI!
+7. Click "Apply Changes" to use the refined prompt
+
+---
+
+## 2025-10-27 - Fast/Expert Modes, Custom Prompts & Last Used History
+
+**Date/Time:** Monday, October 27, 2025 - 19:00
+
+**New Features Added:**
+
+### 1. Fast vs Expert AI Modes
+Users can now toggle between two AI processing modes:
+
+**⚡ Fast Mode:**
+- Model: `meta-llama/llama-3.3-70b-instruct`
+- Max Tokens: 1024
+- Temperature: 0.7
+- Use Case: Quick refinements, everyday use
+- Speed: 2-4 seconds
+
+**🧠 Expert Mode:**
+- Model: `deepseek/deepseek-r1` (Deep Reasoning)
+- Max Tokens: 2048
+- Temperature: 0.8
+- Use Case: Complex prompts, deep analysis
+- Speed: 4-8 seconds
+
+**How to Switch:**
+1. Click extension icon
+2. Under "AI Configuration"
+3. Toggle between ⚡ Fast and 🧠 Expert
+4. Mode persists across sessions
+
+### 2. Custom Prompts with Names
+Users can save their own prompt templates:
+
+**Features:**
+- Save any prompt with a custom name
+- Store unlimited custom prompts
+- Quick access from templates screen
+- Delete prompts when no longer needed
+- Persists across browsers/devices (via chrome.storage)
+
+**How to Use:**
+1. Create/refine a prompt
+2. When satisfied, press Cmd+Shift+L (in empty field)
+3. Click "💾 Save Current as Custom Prompt"
+4. Enter a name
+5. Prompt is saved for future use!
+
+**Example Custom Prompts:**
+- "Email Response Template"
+- "Code Review Prompt"
+- "Bug Report Format"
+- "Meeting Summary Structure"
+
+### 3. Last Used Prompt Per Website
+Extension now remembers the last prompt you applied on each website:
+
+**Features:**
+- Automatically saves when you click "Apply Changes"
+- Shows at the top of templates screen
+- Different for each website (stored by hostname)
+- Quick "Use This" button to reuse
+- Highlighted in yellow for visibility
+
+**How It Works:**
+1. User refines prompt and applies it
+2. Extension saves it for that website (e.g., chat.openai.com)
+3. Next time user opens templates on that site
+4. Last used prompt appears at the top
+5. One-click to reuse it!
+
+**Storage Structure:**
+```javascript
+{
+  "chat.openai.com": "As an expert developer, review this code...",
+  "claude.ai": "Analyze this from a business perspective...",
+  "example.com": "..."
+}
+```
+
+**Files Modified:**
+- `popup/popup.html` - Added Fast/Expert mode toggle UI
+- `popup/popup.css` - Styled mode toggle buttons
+- `popup/popup.js` - Mode switching logic and persistence
+- `lib/llm-service.js` - Support for multiple models, mode-based parameters
+- `content/modal.js` - Custom prompts CRUD, last used prompt display
+- `content/content.css` - Styles for custom prompts and last used sections
+- `dev_documentation.txt` - Documented new features
+
+**User Benefits:**
+✅ Choose between speed and depth based on need
+✅ Build personal library of prompts
+✅ Don't retype common prompts
+✅ Remember successful prompts per website
+✅ Faster workflow with saved templates
+
+**Storage Keys Used:**
+- `aiMode` - Current AI mode (fast/expert)
+- `customPrompts` - Array of user-saved prompts
+- `lastUsedPrompts` - Object mapping hostname → last prompt
+
+**Verification:**
+1. Test Fast/Expert toggle:
+   - Open popup → Switch modes → Check indicator text changes
+
+2. Test Custom Prompts:
+   - Refine a prompt → Open templates → Save as custom
+   - Check it appears in "My Custom Prompts" section
+   - Delete it → Verify it's removed
+
+3. Test Last Used:
+   - Apply a prompt on a website
+   - Open templates again (empty field)
+   - Check "📌 Last Used on This Site" section shows your prompt
+   - Click "Use This" → Prompt should be applied
+
+---
+
+## 2025-10-27 - Expert Mode Output Cleaning & Auto-Copy
+
+**Date/Time:** Monday, October 27, 2025 - 20:00
+
+**Issues Fixed:**
+
+### 1. Expert Mode Thinking Process Visible
+**Problem:** DeepSeek R1 (Expert mode) outputs its reasoning process wrapped in `<think>` tags, which was being shown to users.
+
+**Example Output:**
+```
+<think>
+The user wants to know about Mercor's Series C funding...
+Let me analyze their business model...
+</think>
+
+Acting as an expert consultant in the field of finance...
+```
+
+Users only want the final refined prompt, not the thinking process.
+
+**Solution:**
+- Added `extractFinalAnswer()` method to LLM service
+- Automatically detects and removes `<think>...</think>` tags
+- Also removes common reasoning markers like "Thinking:", "Analysis:", etc.
+- Cleans up "Answer:" or "Final Answer:" prefixes
+- Only applies to Expert mode (Fast mode doesn't need this)
+
+**Implementation:**
+```javascript
+extractFinalAnswer(text) {
+  // Remove thinking tags and content
+  let cleaned = text.replace(/<think>[\s\S]*?<\/think>/gi, '');
+  // Remove reasoning markers
+  cleaned = cleaned.replace(/^##?\s*(Thinking|Reasoning|Analysis):?[\s\S]*?(?=##?\s*\w+:|$)/gim, '');
+  // Remove answer prefixes
+  cleaned = cleaned.replace(/^##?\s*(Final\s+)?Answer:\s*/im, '');
+  return cleaned.trim();
+}
+```
+
+### 2. Auto-Copy to Clipboard
+**Problem:** After refining a prompt, users had to manually select and copy the text.
+
+**Solution:**
+- Automatically copy refined prompt to clipboard when clicking "Apply Changes"
+- Shows toast notification "📋 Copied to clipboard!"
+- Works for all sources: AI refinement, templates, custom prompts
+- Non-blocking: if copy fails, still applies the changes
+
+**User Flow:**
+1. Refine prompt with AI
+2. Click "Apply Changes"
+3. Prompt is:
+   - ✅ Applied to text field
+   - ✅ Saved as last used (per site)
+   - ✅ Copied to clipboard
+4. Toast shows: "📋 Copied to clipboard!"
+
+**Benefits:**
+- No manual copy needed
+- Can paste prompt anywhere else
+- Especially useful for comparing versions
+- One-click workflow
+
+**Files Modified:**
+- `lib/llm-service.js` - Added extractFinalAnswer() method
+- `lib/llm-service.js` - Modified refinePrompt() to clean Expert mode output
+- `content/modal.js` - Added auto-copy in applyChanges()
+- `content/modal.js` - Added showCopySuccessFeedback() method
+- `dev_documentation.txt` - Documented changes
+
+**Technical Details:**
+- Uses `navigator.clipboard.writeText()` API
+- Requires HTTPS or localhost (standard browser security)
+- Fallback: continues if copy fails (doesn't block apply)
+- Toast appears for 1.5 seconds
+
+**Verification:**
+1. Test Expert Mode Output Cleaning:
+   - Switch to Expert mode in popup
+   - Type prompt and refine with AI
+   - Verify no `<think>` tags or reasoning shown
+   - Only final prompt appears
+
+2. Test Auto-Copy:
+   - Refine any prompt
+   - Click "Apply Changes"
+   - See toast: "📋 Copied to clipboard!"
+   - Open another app → Paste (Cmd+V)
+   - Refined prompt should appear
+
+**Edge Cases Handled:**
+- Clipboard permission denied → Continues anyway
+- No thinking tags present → Returns original text
+- Mixed formats (markdown, plain text) → Cleaned appropriately
+- Empty thinking blocks → Handled gracefully

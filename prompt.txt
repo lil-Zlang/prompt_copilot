@@ -1,0 +1,162 @@
+Detailed Guide to Prompt Engineering: Best Practices, Techniques, Details, and Use CasesIntroductionPrompt engineering is the process of crafting and optimizing inputs (prompts) to elicit desired outputs from large language models (LLMs) like GPT series, Gemini, or Grok. It combines art and science, focusing on clear instructions, context, and structure to guide the model's responses effectively. 
+
+ai21.com
+
+ This technique maximizes the capabilities of pre-trained models without requiring fine-tuning, making it essential for tasks ranging from simple queries to complex reasoning. As models evolve, prompt engineering becomes easier with newer versions, but it still involves iteration and experimentation to achieve optimal results. 
+
+help.openai.com
+
+Best PracticesTo create effective prompts, follow these foundational guidelines drawn from established sources. These practices apply across most techniques and help minimize errors like hallucinations (fabricated information) or irrelevant outputs.Practice
+Description
+Benefits
+Example
+Use the Latest Model
+Select the most recent and capable model available, as they handle prompts more robustly.
+Easier engineering, better accuracy, and reduced need for complex tweaks.
+For a summarization task, use GPT-4 over GPT-3 for more reliable results without extra examples. 
+
+help.openai.com
+
+Be Specific and Descriptive
+Include details on context, outcome, length, format, style, and tone to reduce ambiguity.
+Aligns outputs closely with intent, minimizing misinterpretations.
+Instead of "Write a poem about AI," say "Write a short, inspiring poem about AI advancements in the style of Maya Angelou, focusing on hope and innovation, in 8-10 lines."
+Use Delimiters and Clear Syntax
+Separate instructions from content using markers like "###", """, or "---"; incorporate punctuation, headings, and Markdown.
+Improves clarity and structure, making outputs easier to parse and reducing confusion.
+"Summarize the text below. Text: """{article}""" Output as bullet points." 
+
+learn.microsoft.com
+
+Place Instructions at the Beginning (and Repeat if Needed)
+Start with clear directives; reiterate key points at the end to counter recency bias.
+Ensures focus on the task, especially in long prompts.
+"Your task is to classify the text. [Text here]. Remember: Classify only as positive, negative, or neutral."
+Provide Examples Where Possible
+Use zero-shot (no examples) first, then few-shot (1-5 examples) if needed; avoid fluffy language.
+Builds on model's pattern recognition for better precision without overcomplicating.
+For keyword extraction: Provide 2-3 sample texts with extracted keywords before the new one. 
+
+help.openai.com
+
+Direct What to Do, Not What Not to Do
+Frame guidance positively, offering alternatives.
+Guides behavior effectively without creating loopholes.
+Instead of "Don't ask for passwords," say "Refer users to the help FAQ for login issues."
+Adjust Parameters
+Tune temperature (low for factual tasks, high for creative) and max tokens for output control.
+Balances randomness and length for task-specific needs.
+Set temperature to 0 for exact data extraction to ensure consistency. 
+
+learn.microsoft.com
+
+Break Tasks Down
+Decompose complex queries into steps or sub-prompts.
+Handles intricacy better, reducing errors.
+For fact-checking: First extract claims, then generate verification queries.
+Ground with Context
+Include relevant external data or snippets to limit responses to provided info.
+Reduces hallucinations by anchoring to facts.
+"Answer based only on this text: [snippet]. What is the capital of France?"
+Give the Model an 'Out'
+Allow responses like "Not found" to avoid forced fabrications.
+Promotes honesty and accuracy.
+"If the info isn't in the text, say 'Information not available.'"
+
+These practices form the backbone of effective prompting, but always validate outputs due to inherent LLM limitations like potential inaccuracies.Key TechniquesBelow are prominent prompt engineering techniques, categorized into basic and advanced. Each includes details on how it works, benefits, limitations, and real-world use cases with examples. Techniques are selected based on commonality across sources for comprehensiveness.Basic TechniquesZero-Shot PromptingDetails: Provide a direct instruction or question without examples, relying on the model's pre-trained knowledge.
+Benefits: Quick and simple; no need for example preparation; versatile for general tasks.
+Limitations: Less accurate for complex or ambiguous queries; prone to misinterpretation without guidance.
+Use Cases: Simple translations, definitions, or Q&A. Example: "Explain climate change in simple terms." The model responds with a basic overview of causes (e.g., greenhouse gases) and effects (e.g., rising temperatures). 
+
+ibm.com
+
+Few-Shot Prompting (In-Context Learning)Details: Include 1-5 examples of input-output pairs to demonstrate the desired format or pattern.
+Benefits: Improves accuracy and consistency by guiding the model; effective for pattern-based tasks without fine-tuning.
+Limitations: Consumes prompt space; requires quality examples to avoid misleading the model.
+Use Cases: Classification or content generation. Example: "Text: 'Great product!' Sentiment: Positive. Text: 'It broke quickly.' Sentiment: Negative. Text: 'Okay, but overpriced.' Sentiment:" Model outputs "Neutral." 
+
+medium.com
+
+Role-PlayingDetails: Instruct the model to adopt a specific persona (e.g., expert, character) for the response.
+Benefits: Tailors outputs to domain expertise or style; enhances relevance and engagement.
+Limitations: Depends on model's knowledge of the role; may not handle niche personas well.
+Use Cases: Technical advice or creative writing. Example: "You are a software architect. Help me design a scalable app for user recommendations." Model provides structured architecture suggestions. 
+
+lennysnewsletter.com
+
+Style UnbundlingDetails: Analyze an expert's style into bullet points, then use them to guide new outputs.
+Benefits: Allows precise emulation without full persona; customizable for specific elements.
+Limitations: Two-step process adds time; initial analysis may miss nuances.
+Use Cases: Content creation mimicking brands. Example: Break down Apple's announcement style (e.g., simplicity, storytelling), then "Announce our new feature in this style: [bullets]." Model generates a polished product update. 
+
+lennysnewsletter.com
+
+Emotion PromptingDetails: Add emotional stakes (e.g., "This is important for my career") to encourage thorough responses.
+Benefits: Elicits more careful, detailed outputs by triggering the model's helpfulness.
+Limitations: Can backfire if overused; not always consistent.
+Use Cases: High-stakes writing. Example: "Draft a roadmap presentation. Make it urgent and strategic. This is vital for my promotion." Model produces a compelling, focused draft. 
+
+lennysnewsletter.com
+
+Advanced TechniquesChain-of-Thought (CoT) PromptingDetails: Instruct the model to reason step-by-step before concluding.
+Benefits: Enhances logical accuracy; transparent for debugging.
+Limitations: Longer outputs; not ideal for simple tasks or reasoning-optimized models.
+Use Cases: Problem-solving. Example: "Solve: A farm has 5 chickens and 3 cows. How many legs? Think step-by-step." Model: "Chickens: 5x2=10. Cows: 3x4=12. Total: 22." 
+
+medium.com
+
+Tree-of-Thought (ToT) PromptingDetails: Explore multiple reasoning branches, evaluate, and select the best path.
+Benefits: Handles alternatives and backtracking; robust for complex decisions.
+Limitations: Computationally intensive; requires orchestration.
+Use Cases: Strategy planning. Example: "To reduce churn: Branch 1: Loyalty programs. Branch 2: Feedback loops. Evaluate and choose best." Model compares pros/cons and recommends one. 
+
+ai21.com
+
+Prompt ChainingDetails: Sequence prompts where each output feeds the next for multi-step tasks.
+Benefits: Manages complexity; allows iterative refinement.
+Limitations: Error propagation; time-consuming.
+Use Cases: Report generation. Example: Prompt 1: "Outline AI trends." Prompt 2: "Expand section 1 using output." Builds a full article progressively. 
+
+medium.com
+
+Self-Consistency PromptingDetails: Generate multiple responses and select the most consistent via majority vote.
+Benefits: Increases reliability; filters inconsistencies.
+Limitations: Resource-heavy; best for verifiable tasks.
+Use Cases: Math problems. Example: "Age riddle: When I was 6, sister was half my age. I'm 40 now. Her age?" Generate 5 chains; majority: 37. 
+
+ibm.com
+
+Generated Knowledge PromptingDetails: Have the model generate background knowledge first, then use it for the main task.
+Benefits: Builds context; improves informed responses.
+Limitations: Risk of inaccurate generated knowledge.
+Use Cases: Domain explanations. Example: "List AI logistics facts, then: How can AI fix warehouse issues?" Model uses facts for targeted advice. 
+
+ai21.com
+
+ReAct (Reasoning and Acting) PromptingDetails: Alternate reasoning steps with actions (e.g., tool calls like search).
+Benefits: Integrates external data; dynamic and accurate.
+Limitations: Needs tools; adds latency.
+Use Cases: Fact-checking. Example: "Thought: Need current data. Action: Search 'ISS astronauts'. Observation: 7. Answer: 7." 
+
+medium.com
+
+Retrieval-Augmented Generation (RAG)Details: Retrieve external documents and inject them into the prompt for grounded generation.
+Benefits: Reduces hallucinations; handles up-to-date info.
+Limitations: Requires a knowledge base; retrieval errors possible.
+Use Cases: Q&A on current events. Example: Retrieve Wikipedia snippet on Tokyo, then "Population of Tokyo?" Model: "About 37 million." 
+
+medium.com
+
+Self-Refine PromptingDetails: Generate an initial response, then critique and refine it.
+Benefits: Iterative improvement; higher quality.
+Limitations: Doubles effort; model-dependent self-critique.
+Use Cases: Content polishing. Example: "Draft explanation, then evaluate logic and refine." Model iterates for clearer output. 
+
+ai21.com
+
+ConclusionPrompt engineering evolves with AI advancements, but mastering these practices and techniques can significantly enhance LLM performance across applications like customer support, content creation, and analysis. 
+
+ai21.com
+
+ Experiment with combinations, test iteratively, and adapt to specific models for best results. For further reading, explore resources from OpenAI, IBM, and Microsoft.
+
