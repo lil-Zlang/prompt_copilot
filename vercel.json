@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd prompt-copilot-demo && npm run build",
-  "devCommand": "cd prompt-copilot-demo && npm run dev",
-  "installCommand": "cd prompt-copilot-demo && npm install",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
   "framework": "nextjs",
   "rootDirectory": "prompt-copilot-demo"
 }
