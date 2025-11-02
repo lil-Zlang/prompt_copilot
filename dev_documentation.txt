@@ -589,3 +589,45 @@ extractFinalAnswer(text) {
 - No thinking tags present → Returns original text
 - Mixed formats (markdown, plain text) → Cleaned appropriately
 - Empty thinking blocks → Handled gracefully
+
+---
+
+## [2025-11-02 - Fixed Download Links and Vercel Deployment]
+
+**Changes Made:**
+
+1. **Fixed Extension Download Links**
+   - Updated ExtensionDownload.tsx to use correct GitHub URL
+   - Changed download link from `lil-zlang` to `lil-Zlang` (case-sensitive)
+   - Correct path: `https://github.com/lil-Zlang/prompt_copilot/raw/master/prompt-copilot-distribution/prompt-copilot.zip`
+   - Changed branch from `main` to `master`
+
+2. **Fixed GitHub Repository Links**
+   - Updated all references to use correct repo URL: `https://github.com/lil-Zlang/prompt_copilot`
+   - Fixed demo-content.ts to point to correct download location
+   - Updated README links to correct repository
+
+3. **Vercel Deployment Configuration**
+   - Removed invalid vercel.json (rootDirectory not supported in schema)
+   - Deployed directly from prompt-copilot-demo subdirectory using CLI
+   - Command: `cd prompt-copilot-demo && npx vercel --prod`
+   - Successfully deployed to production
+
+4. **Files Modified**
+   - `prompt-copilot-demo/components/ExtensionDownload.tsx`
+   - `prompt-copilot-demo/data/demo-content.ts`
+   - `prompt-copilot-demo/README.md`
+
+**Repository Structure:**
+- Extension source: `/` (root)
+- Distribution package: `/prompt-copilot-distribution/prompt-copilot.zip`
+- Demo website: `/prompt-copilot-demo/`
+
+**Deployment URL:**
+- Live demo: https://prompt-copilot-demo-kx1080siz-langs-projects-f4b64e04.vercel.app
+
+**Notes:**
+- For future Vercel deployments from monorepo subdirectories, deploy directly from the subdirectory using `npx vercel`
+- The `vercel.json` file at repo root does not support `rootDirectory` property
+- Vercel will automatically redeploy when changes are pushed to the master branch
+
