@@ -38,7 +38,7 @@ To use Prompt Co-Pilot in your browser, follow these steps:
    - Enable for websites via extension popup
    - Press `Cmd+Shift+L` (Mac) or `Ctrl+Shift+L` (Windows) in any text field
 
-For detailed instructions, see [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
+For detailed instructions, see the repository: [github.com/lil-Zlang/prompt_copilot](https://github.com/lil-Zlang/prompt_copilot)
 
 ## Features
 

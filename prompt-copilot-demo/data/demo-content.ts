@@ -82,8 +82,8 @@ export const demoContent = {
         details: 'Enable the extension for any website, then press Cmd+Shift+L (Mac) or Ctrl+Shift+L (Windows) in any text field.'
       }
     ],
-    downloadLink: 'https://github.com/lil-zlang/prompt-copilot/releases/latest/download/prompt-copilot.zip',
-    githubLink: 'https://github.com/lil-zlang/prompt-copilot',
-    guideLink: 'https://github.com/lil-zlang/prompt-copilot/blob/main/prompt-copilot-demo/DEVELOPER_GUIDE.md'
+    downloadLink: 'https://github.com/lil-Zlang/prompt_copilot/raw/master/prompt-copilot-distribution/prompt-copilot.zip',
+    githubLink: 'https://github.com/lil-Zlang/prompt_copilot',
+    guideLink: 'https://github.com/lil-Zlang/prompt_copilot#readme'
   }
 };

@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(tree -L 3 -I 'node_modules' .)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}

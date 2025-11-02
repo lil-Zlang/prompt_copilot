@@ -15,7 +15,7 @@ export default function ExtensionDownload() {
           
           <div className="flex flex-wrap gap-3 mb-6">
             <a
-              href="https://github.com/lil-zlang/prompt-copilot/raw/main/prompt-copilot.zip"
+              href="https://github.com/lil-Zlang/prompt_copilot/raw/master/prompt-copilot-distribution/prompt-copilot.zip"
               download="prompt-copilot.zip"
               className="px-6 py-3 bg-black text-white font-mono hover:bg-gray-800 transition-colors border border-black inline-block"
             >
