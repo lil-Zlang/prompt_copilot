@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd prompt-copilot-demo && npm install && npm run build",
+  "outputDirectory": "prompt-copilot-demo/.next",
+  "installCommand": "cd prompt-copilot-demo && npm install"
+}
