@@ -631,3 +631,45 @@ extractFinalAnswer(text) {
 - The `vercel.json` file at repo root does not support `rootDirectory` property
 - Vercel will automatically redeploy when changes are pushed to the master branch
 
+
+---
+
+## [2025-11-02 - Fixed Vercel Deployment with Monorepo Configuration]
+
+**Issue:** Vercel was failing to build because it couldn't find the `app` directory. The build was running from the repository root instead of the `prompt-copilot-demo` subdirectory.
+
+**Root Cause:** 
+- Repository is a monorepo with both extension code (root) and demo website (`prompt-copilot-demo/`)
+- Vercel defaults to building from repository root
+- Previous attempt to use `rootDirectory` in `vercel.json` failed (property not supported in schema)
+
+**Solution:**
+Created `vercel.json` with custom build commands that navigate to the subdirectory:
+
+```json
+{
+  "buildCommand": "cd prompt-copilot-demo && npm install && npm run build",
+  "outputDirectory": "prompt-copilot-demo/.next",
+  "installCommand": "cd prompt-copilot-demo && npm install"
+}
+```
+
+**Changes:**
+1. Created `vercel.json` at repository root
+2. Configured custom build commands to run from `prompt-copilot-demo/`
+3. Set output directory to `prompt-copilot-demo/.next`
+4. Committed and pushed to trigger redeploy
+
+**Files Modified:**
+- `vercel.json` (created)
+
+**Extension ZIP File:**
+- Removed `*.zip` from `.gitignore` to allow tracking distribution package
+- `prompt-copilot-distribution/prompt-copilot.zip` (127KB) is now tracked in git
+- Download link working: https://github.com/lil-Zlang/prompt_copilot/raw/master/prompt-copilot-distribution/prompt-copilot.zip
+
+**Verification:**
+- Vercel should now successfully build from the Next.js subdirectory
+- Extension download link is functional on the demo website
+
+---
