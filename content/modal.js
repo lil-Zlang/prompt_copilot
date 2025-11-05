@@ -483,14 +483,14 @@ class CoPilotModal {
       <div class="copilot-error">
         <span class="copilot-error-icon">🔑</span>
         <h3>API Key Required</h3>
-        <p>Please configure your OpenAI API key to use AI-powered refinement.</p>
+        <p>Please configure your Novita AI API key to use AI-powered refinement.</p>
         <ol style="text-align: left; margin: 16px auto; max-width: 400px;">
           <li>Click the extension icon in your browser toolbar</li>
-          <li>Enter your OpenAI API key</li>
+          <li>Enter your Novita AI API key</li>
           <li>Click Save</li>
           <li>Try again!</li>
         </ol>
-        <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #3b82f6;">Get API key at platform.openai.com →</a>
+        <a href="https://novita.ai" target="_blank" style="color: #3b82f6;">Get API key at novita.ai →</a>
       </div>
     `;
   }

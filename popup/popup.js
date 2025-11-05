@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modeInfo = document.getElementById('modeInfo');
 
   // Load saved API key and mode
-  chrome.storage.local.get(['openaiApiKey', 'aiMode'], (result) => {
-    if (result.openaiApiKey) {
-      apiKeyInput.value = result.openaiApiKey;
+  chrome.storage.local.get(['novitaApiKey', 'aiMode'], (result) => {
+    if (result.novitaApiKey) {
+      apiKeyInput.value = result.novitaApiKey;
       apiStatus.textContent = '✓ API Key saved';
       apiStatus.className = 'api-status success';
     }
@@ -24,13 +24,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     setMode(mode);
   });
 
-  // Validate OpenAI API key format
-  function validateOpenAIKey(apiKey) {
+  // Validate Novita AI API key format
+  function validateNovitaKey(apiKey) {
     if (!apiKey || typeof apiKey !== 'string') {
       return false;
     }
-    // OpenAI API keys start with 'sk-' and are typically 51 characters long
-    return apiKey.trim().startsWith('sk-') && apiKey.trim().length >= 20;
+    // Novita AI API keys are typically alphanumeric strings
+    // Validate that it's a non-empty string with reasonable length
+    return apiKey.trim().length >= 10;
   }
 
   // Save API key
@@ -43,15 +44,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Validate OpenAI API key format
-    if (!validateOpenAIKey(apiKey)) {
-      apiStatus.textContent = '✗ Invalid format. OpenAI keys start with "sk-"';
+    // Validate Novita AI API key format
+    if (!validateNovitaKey(apiKey)) {
+      apiStatus.textContent = '✗ Invalid format. Please check your Novita AI API key.';
       apiStatus.className = 'api-status error';
       return;
     }
 
     // Save to storage
-    await chrome.storage.local.set({ openaiApiKey: apiKey });
+    await chrome.storage.local.set({ novitaApiKey: apiKey });
     
     apiStatus.textContent = '✓ API Key saved successfully!';
     apiStatus.className = 'api-status success';
@@ -77,11 +78,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (mode === 'fast') {
       fastModeBtn.classList.add('active');
       expertModeBtn.classList.remove('active');
-      modeInfo.textContent = 'Using: Fast mode (GPT-4o Mini)';
+      modeInfo.textContent = 'Using: Fast mode (Llama 3.3 70B)';
     } else {
       fastModeBtn.classList.remove('active');
       expertModeBtn.classList.add('active');
-      modeInfo.textContent = 'Using: Expert mode (GPT-4o - Advanced Reasoning)';
+      modeInfo.textContent = 'Using: Expert mode (DeepSeek R1 - Advanced Reasoning)';
     }
   }
 

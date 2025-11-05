@@ -1,5 +1,88 @@
 # Development Documentation
 
+## 2025-11-05 - Provider Change: OpenAI to Novita AI
+
+**Date/Time:** Wednesday, November 5, 2025 - 13:38
+
+**Change:** Switched AI provider from OpenAI back to Novita AI
+
+**Previous Implementation:**
+- Used OpenAI API endpoint (https://api.openai.com/v1)
+- Storage key: `openaiApiKey`
+- Models: `gpt-4o-mini` (fast), `gpt-4o` (expert)
+- UI labels referenced "OpenAI"
+- Validated OpenAI API key format (starts with "sk-" and minimum 20 characters)
+
+**New Implementation:**
+- Uses Novita AI API endpoint (https://api.novita.ai/openai/v1)
+- Storage key: `novitaApiKey`
+- Models: `meta-llama/llama-3.3-70b-instruct` (fast), `deepseek/deepseek-r1` (expert)
+- UI labels reference "Novita AI"
+- Validates Novita AI API key format (minimum 10 characters, alphanumeric)
+
+**Changes Made:**
+
+### 1. API Service (`lib/llm-service.js`)
+- Changed baseURL from `https://api.openai.com/v1` to `https://api.novita.ai/openai/v1`
+- Updated models to Novita AI models:
+  - Fast mode: `meta-llama/llama-3.3-70b-instruct` (fast, cost-effective)
+  - Expert mode: `deepseek/deepseek-r1` (advanced reasoning)
+- Updated `validateApiKey()` method to check Novita AI key format (minimum 10 characters)
+- Updated storage key from `openaiApiKey` to `novitaApiKey`
+- Updated error messages to reference Novita AI instead of OpenAI
+- Updated model info display to show "Llama 3.3 70B" and "DeepSeek R1"
+
+### 2. Popup UI (`popup/popup.js`)
+- Updated storage key from `openaiApiKey` to `novitaApiKey`
+- Renamed `validateOpenAIKey()` to `validateNovitaKey()` for client-side validation
+- Updated error messages to show "Invalid format. Please check your Novita AI API key."
+- Updated mode display text to show "Llama 3.3 70B" and "DeepSeek R1 - Advanced Reasoning"
+
+### 3. Popup HTML (`popup/popup.html`)
+- Changed label from "OpenAI API Key" to "Novita AI API Key"
+- Updated placeholder to "Enter your Novita AI API key"
+- Updated link from platform.openai.com/api-keys to novita.ai
+- Updated default mode info text to "Using: Fast mode (Llama 3.3 70B)"
+
+### 4. Modal (`content/modal.js`)
+- Updated API key warning message to reference Novita AI
+- Changed link from platform.openai.com/api-keys to novita.ai
+- Updated error messages to mention Novita AI API key
+
+**API Key Validation:**
+- Format check: Minimum 10 characters (alphanumeric strings)
+- Both client-side (popup) and server-side (service) validation
+- Clear error messages if format is invalid
+
+**Benefits:**
+- ✅ Cost-effective with open-source models
+- ✅ Access to diverse model options through Novita AI
+- ✅ Compatible with OpenAI API format (openai/v1 endpoint)
+- ✅ Fast mode uses Llama 3.3 70B for quick responses
+- ✅ Expert mode uses DeepSeek R1 for advanced reasoning
+
+**Migration Notes:**
+- Existing users with `openaiApiKey` will need to re-enter their API key as `novitaApiKey`
+- Old storage key (`openaiApiKey`) is no longer used
+- Users should get API keys from https://novita.ai
+
+**Files Modified:**
+- `lib/llm-service.js` - Updated API endpoint, models, storage key, validation
+- `popup/popup.js` - Updated storage key, validation function, updated UI text
+- `popup/popup.html` - Updated labels and links
+- `content/modal.js` - Updated error messages
+
+**Verification:**
+1. Open extension popup
+2. Enter Novita AI API key (minimum 10 characters)
+3. Should see validation error if format is wrong
+4. Save key successfully
+5. Use AI refinement feature
+6. Verify it calls Novita AI API endpoint
+7. Check that models are Llama 3.3 70B (fast) and DeepSeek R1 (expert)
+
+---
+
 ## 2025-11-02 - OpenAI API Key Format Support
 
 **Date/Time:** Sunday, November 2, 2025 - 12:31
