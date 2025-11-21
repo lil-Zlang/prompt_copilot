@@ -8,24 +8,24 @@ const CURE_TEMPLATES = {
     description: 'Specify what you want from the AI',
     options: [
       {
+        id: 'improve',
+        label: 'Improve writing',
+        template: 'Improve the writing style of the following text:'
+      },
+      {
+        id: 'grammar',
+        label: 'Fix grammar',
+        template: 'Fix the grammar and spelling in the following text:'
+      },
+      {
+        id: 'expand',
+        label: 'Expand this idea',
+        template: 'Expand on the following idea with more details:'
+      },
+      {
         id: 'summary',
         label: 'Get a summary',
         template: 'Provide a concise summary.'
-      },
-      {
-        id: 'steps',
-        label: 'Get step-by-step',
-        template: 'Give me step-by-step instructions.'
-      },
-      {
-        id: 'pros-cons',
-        label: 'Compare pros/cons',
-        template: 'List the pros and cons.'
-      },
-      {
-        id: 'examples',
-        label: 'Show examples',
-        template: 'Provide specific examples.'
       }
     ]
   },
@@ -95,6 +95,11 @@ const CURE_TEMPLATES = {
         template: 'Use a professional, formal tone.'
       },
       {
+        id: 'funny',
+        label: 'Funny',
+        template: 'Write in a funny, humorous tone.'
+      },
+      {
         id: 'casual',
         label: 'Casual',
         template: 'Use a casual, conversational tone.'
@@ -103,11 +108,6 @@ const CURE_TEMPLATES = {
         id: 'enthusiastic',
         label: 'Enthusiastic',
         template: 'Be enthusiastic and energetic in your response.'
-      },
-      {
-        id: 'technical',
-        label: 'Technical',
-        template: 'Use technical language and precision.'
       }
     ]
   },

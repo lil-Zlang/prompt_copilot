@@ -10,12 +10,8 @@ class PromptCoPilot {
   }
 
   async init() {
-    // Check if extension is enabled for this site
-    const response = await chrome.runtime.sendMessage({
-      type: 'CHECK_SITE_ENABLED',
-      url: window.location.href
-    });
-    this.isEnabled = response.enabled;
+    // Extension is now enabled for all sites by default
+    this.isEnabled = true;
 
     // Listen for messages from background script
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -25,12 +21,11 @@ class PromptCoPilot {
     // Track currently focused text field
     this.setupFocusTracking();
 
-    // Add visual indicator if enabled
-    if (this.isEnabled) {
-      this.showEnabledIndicator();
-    }
+    // Track text selection
+    this.setupSelectionTracking();
 
-    console.log('Prompt Co-Pilot initialized', { enabled: this.isEnabled });
+    // Add visual indicator
+    this.showEnabledIndicator();
   }
 
   handleMessage(message, sender, sendResponse) {
@@ -43,6 +38,10 @@ class PromptCoPilot {
         this.showEnablePrompt();
         break;
 
+      case 'EXECUTE_ACTION':
+        this.executeAction(message.action, message.customPrompt);
+        break;
+
       case 'SITE_STATUS_CHANGED':
         this.isEnabled = message.enabled;
         if (message.enabled) {
@@ -52,6 +51,10 @@ class PromptCoPilot {
         }
         break;
     }
+  }
+
+  executeAction(action, customPrompt) {
+    this.openModal(null, null, action, customPrompt);
   }
 
   setupFocusTracking() {
@@ -70,6 +73,90 @@ class PromptCoPilot {
         }
       }, 100);
     }, true);
+  }
+
+  setupSelectionTracking() {
+    // Create the trigger button
+    this.createTriggerButton();
+
+    // Listen for selection changes
+    document.addEventListener('mouseup', () => this.handleSelection());
+    document.addEventListener('keyup', () => this.handleSelection());
+
+    // Hide trigger on scroll or resize
+    document.addEventListener('scroll', () => this.hideTrigger(), { capture: true, passive: true });
+    window.addEventListener('resize', () => this.hideTrigger());
+
+    // Hide trigger when clicking elsewhere
+    document.addEventListener('mousedown', (e) => {
+      if (this.triggerButton && !this.triggerButton.contains(e.target)) {
+        this.hideTrigger();
+      }
+    });
+  }
+
+  createTriggerButton() {
+    if (this.triggerButton) return;
+
+    const btn = document.createElement('div');
+    btn.className = 'copilot-selection-trigger';
+    btn.innerHTML = '✨';
+    btn.title = 'Improve with Co-Pilot';
+
+    btn.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Prevent losing selection
+      e.stopPropagation();
+      this.openModal('trigger');
+      this.hideTrigger();
+    });
+
+    document.body.appendChild(btn);
+    this.triggerButton = btn;
+  }
+
+  handleSelection() {
+    // Wait slightly for selection to settle
+    setTimeout(() => {
+      const selection = window.getSelection();
+      const text = selection.toString().trim();
+
+      // Check if we have text. We'll be less strict about "editable" check
+      // because sometimes it's hard to detect (e.g. shadow DOM, complex editors)
+      // If the user selects text, we offer help.
+      if (text.length > 0) {
+        this.showTrigger(selection);
+      } else {
+        this.hideTrigger();
+      }
+    }, 100);
+  }
+
+  isSelectionEditable(selection) {
+    // Deprecated: We now show trigger for any selection to ensure visibility
+    return true;
+  }
+
+  showTrigger(selection) {
+    if (!this.triggerButton) return;
+
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    if (rect.width === 0 && rect.height === 0) return;
+
+    // Position above the selection
+    const top = rect.top + window.scrollY - 40;
+    const left = rect.left + window.scrollX + (rect.width / 2) - 16;
+
+    this.triggerButton.style.top = `${top}px`;
+    this.triggerButton.style.left = `${left}px`;
+    this.triggerButton.classList.add('visible');
+  }
+
+  hideTrigger() {
+    if (this.triggerButton) {
+      this.triggerButton.classList.remove('visible');
+    }
   }
 
   isTextInput(element) {
@@ -147,10 +234,10 @@ class PromptCoPilot {
     return false;
   }
 
-  async openModal(source, selectionText = '') {
+  async openModal(source, selectionText = '', action = null, customPrompt = null) {
     if (!this.isEnabled) {
-      this.showEnablePrompt();
-      return;
+      // Should be enabled by default now, but just in case
+      this.isEnabled = true;
     }
 
     // Get current text
@@ -171,7 +258,7 @@ class PromptCoPilot {
       }
     }
 
-    if (!promptText.trim()) {
+    if (!promptText.trim() && !customPrompt) {
       this.showNotification('No text found. Please type something first.', 'warning');
       return;
     }
@@ -182,11 +269,12 @@ class PromptCoPilot {
     }
 
     // Open modal with text
-    this.modal.open(promptText, this.currentTextField);
+    this.modal.open(promptText, this.currentTextField, action, customPrompt);
   }
 
   async loadModal() {
     // Modal class is already loaded via content script
+    // Note: CoPilotModal is now the floating menu class
     this.modal = new CoPilotModal(this);
   }
 
@@ -232,7 +320,7 @@ class PromptCoPilot {
     const indicator = document.createElement('div');
     indicator.id = 'copilot-indicator';
     indicator.className = 'copilot-indicator';
-    indicator.title = 'Prompt Co-Pilot Active (Ctrl+Shift+P)';
+    indicator.title = 'Prompt Co-Pilot Active (Ctrl+Shift+L)';
     indicator.innerHTML = '✨';
     document.body.appendChild(indicator);
   }

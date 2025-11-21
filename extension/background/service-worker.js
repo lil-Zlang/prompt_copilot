@@ -18,21 +18,11 @@ chrome.runtime.onInstalled.addListener(() => {
 // Handle context menu clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'improve-with-copilot') {
-    // Check if extension is enabled for this site
-    checkIfEnabled(tab.url).then(isEnabled => {
-      if (isEnabled) {
-        // Send message to content script to open modal
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'OPEN_COPILOT_MODAL',
-          source: 'contextMenu',
-          selectionText: info.selectionText || ''
-        });
-      } else {
-        // Show notification that extension needs to be enabled
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'SHOW_ENABLE_PROMPT'
-        });
-      }
+    // Send message to content script to open modal
+    chrome.tabs.sendMessage(tab.id, {
+      type: 'OPEN_COPILOT_MODAL',
+      source: 'contextMenu',
+      selectionText: info.selectionText || ''
     });
   }
 });
@@ -40,17 +30,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // Handle keyboard command
 chrome.commands.onCommand.addListener((command, tab) => {
   if (command === 'improve-prompt') {
-    checkIfEnabled(tab.url).then(isEnabled => {
-      if (isEnabled) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'OPEN_COPILOT_MODAL',
-          source: 'keyboard'
-        });
-      } else {
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'SHOW_ENABLE_PROMPT'
-        });
-      }
+    chrome.tabs.sendMessage(tab.id, {
+      type: 'OPEN_COPILOT_MODAL',
+      source: 'keyboard'
     });
   }
 });
@@ -67,6 +49,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .catch(error => {
           sendResponse({ success: false, error: error.message });
         });
+      return true; // Keep channel open for async response
+
+    case 'PROCESS_TEXT_WITH_LLM':
+      processTextWithLLM(message.payload)
+        .then(response => sendResponse({ success: true, data: response }))
+        .catch(error => sendResponse({ success: false, error: error.message }));
       return true; // Keep channel open for async response
 
     case 'CHECK_SITE_ENABLED':
@@ -207,4 +195,67 @@ async function analyzePrompt(text) {
   diagnosis.suggestedCures = [...new Set(diagnosis.suggestedCures)];
 
   return diagnosis;
+}
+
+const NOVITA_API_KEY = 'sk_eqAY-5Fq06-tNy_aB2J0hVThnQkOqr06Peiyeh8k1h8';
+const NOVITA_API_URL = 'https://api.novita.ai/v3/openai/chat/completions';
+
+async function processTextWithLLM(payload) {
+  const { text, action, customPrompt } = payload;
+
+  let systemPrompt = "You are a helpful AI writing assistant. Improve the user's text based on their request. Return ONLY the improved text, no explanations or conversational filler.";
+  let userPrompt = "";
+
+  switch (action) {
+    case 'improve':
+      userPrompt = `Improve the writing style of the following text:\n\n"${text}"`;
+      break;
+    case 'grammar':
+      userPrompt = `Fix the grammar and spelling in the following text:\n\n"${text}"`;
+      break;
+    case 'expand':
+      userPrompt = `Expand on the following idea with more details:\n\n"${text}"`;
+      break;
+    case 'professional':
+      userPrompt = `Rewrite the following text in a professional, formal tone:\n\n"${text}"`;
+      break;
+    case 'funny':
+      userPrompt = `Rewrite the following text in a funny, humorous tone:\n\n"${text}"`;
+      break;
+    case 'custom':
+      userPrompt = `${customPrompt}:\n\n"${text}"`;
+      break;
+    default:
+      userPrompt = text;
+  }
+
+  try {
+    const response = await fetch(NOVITA_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${NOVITA_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3-8b-instruct",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || 'API request failed');
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content.trim();
+  } catch (error) {
+    console.error('LLM Error:', error);
+    throw error;
+  }
 }

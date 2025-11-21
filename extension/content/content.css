@@ -1,0 +1,309 @@
+/* Prompt Co-Pilot Content Styles */
+
+/* ==========/* Floating Menu Styles for Prompt Co-Pilot */
+
+.copilot-floating-menu {
+  position: absolute;
+  width: 320px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  z-index: 2147483647;
+  /* Max z-index */
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.copilot-menu-show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.copilot-backdrop-transparent {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483646;
+  background: transparent;
+  display: none;
+}
+
+.copilot-menu-show+.copilot-backdrop-transparent,
+.copilot-backdrop-transparent.active {
+  display: block;
+}
+
+/* Search Section */
+.copilot-search-box {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.copilot-search-icon {
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+  margin-right: 12px;
+}
+
+.copilot-search-input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  color: #111827;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.copilot-search-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Menu Items */
+.copilot-menu-list {
+  padding: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.copilot-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  border-radius: 6px;
+  transition: background-color 0.15s;
+  margin-bottom: 2px;
+}
+
+.copilot-menu-item:hover,
+.copilot-menu-item.selected {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.copilot-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  color: #6b7280;
+}
+
+.copilot-menu-item:hover .copilot-item-icon {
+  color: #111827;
+}
+
+.copilot-item-label {
+  flex: 1;
+}
+
+/* Scrollbar */
+.copilot-menu-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.copilot-menu-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.copilot-menu-list::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 3px;
+}
+
+.copilot-menu-list::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
+/* Selection Trigger Button */
+.copilot-selection-trigger {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: #111827;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2147483647;
+  /* Max z-index */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  font-size: 16px;
+  border: 2px solid white;
+  /* Add border for visibility on dark backgrounds */
+}
+
+.copilot-selection-trigger.visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Toast Notification */
+.copilot-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 24px;
+  background: #111827;
+  color: white;
+  border-radius: 8px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2147483647;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.copilot-toast-show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.copilot-toast-success {
+  border-left: 4px solid #10b981;
+}
+
+.copilot-toast-error {
+  border-left: 4px solid #ef4444;
+}
+
+.copilot-toast-warning {
+  border-left: 44px solid #f59e0b;
+}
+
+.copilot-toast-info {
+  border-left: 4px solid #3b82f6;
+}
+
+
+/* ========== ANIMATIONS ========== */
+@keyframes copilot-fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes copilot-slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes copilot-slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@keyframes copilot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes copilot-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+  }
+}
+
+/* ========== ERROR STATE ========== */
+.copilot-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
+}
+
+.copilot-error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.copilot-error p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .copilot-modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .copilot-modal-header {
+    padding: 16px;
+  }
+
+  .copilot-loading-state,
+  .copilot-results-state {
+    padding: 16px;
+  }
+
+  .copilot-modal-footer {
+    padding: 12px 16px;
+  }
+
+  .copilot-highlight[data-tooltip]:hover::after {
+    width: 200px;
+  }
+}
